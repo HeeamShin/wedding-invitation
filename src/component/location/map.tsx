@@ -170,7 +170,7 @@ const NaverMap = () => {
                     window.location.href =
                       "https://play.google.com/store/apps/details?id=com.skt.tmap.ku"
                   }
-                }, 700)
+                }, 500)
                 break
               }
               default: {
