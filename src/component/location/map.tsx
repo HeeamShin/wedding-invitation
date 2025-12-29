@@ -151,12 +151,26 @@ const NaverMap = () => {
             switch (checkDevice()) {
               case "ios":
               case "android": {
+                // WGS84 좌표계 사용 (경도, 위도)
                 const params = new URLSearchParams({
-                  goalx: WEDDING_HALL_POSITION[0].toString(),
-                  goaly: WEDDING_HALL_POSITION[1].toString(),
-                  goalName: LOCATION,
+                  rGoX: WEDDING_HALL_POSITION[0].toString(), // 경도
+                  rGoY: WEDDING_HALL_POSITION[1].toString(), // 위도
+                  rGoName: LOCATION,
                 })
-                window.open(`tmap://route?${params.toString()}`, "_self")
+                const tmapUrl = `tmap://route?${params.toString()}`
+                window.location.href = tmapUrl
+
+                // 티맵 미설치 시 스토어로 이동
+                setTimeout(() => {
+                  const device = checkDevice()
+                  if (device === "ios") {
+                    window.location.href =
+                      "https://apps.apple.com/kr/app/tmap/id431589174"
+                  } else if (device === "android") {
+                    window.location.href =
+                      "https://play.google.com/store/apps/details?id=com.skt.tmap.ku"
+                  }
+                }, 1500)
                 break
               }
               default: {
