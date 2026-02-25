@@ -50,7 +50,8 @@ export const PhotoViewer = ({
   const currentIndexRef = useRef(initialIndex)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const imgRef = useRef<HTMLImageElement>(null)
+  const imgRefs = useRef<(HTMLImageElement | null)[]>([])
+  const imgRef = { get current() { return imgRefs.current[currentIndexRef.current] ?? null } }
 
   const updateTransform = useCallback(
     (newScale: number, newTranslate: Point) => {
@@ -271,20 +272,27 @@ export const PhotoViewer = ({
         onTouchEnd={onTouchEnd}
         onTouchCancel={onTouchEnd}
       >
-        <img
-          ref={imgRef}
-          src={images[currentIndex]}
-          alt={`${currentIndex}`}
-          draggable={false}
-          className="photo-viewer-image"
-          style={{
-            transform:
-              scaleRef.current > 1
-                ? `translate(${translate.x}px, ${translate.y}px) scale(${scale})`
-                : `translateX(${swipeOffset}px)`,
-          }}
-          onTouchEnd={onTap}
-        />
+        {images.map((src, idx) => (
+          <img
+            key={idx}
+            ref={(el) => { imgRefs.current[idx] = el }}
+            src={src}
+            alt={`${idx}`}
+            draggable={false}
+            className={`photo-viewer-image${idx === currentIndex ? " active" : ""}`}
+            style={
+              idx === currentIndex
+                ? {
+                    transform:
+                      scaleRef.current > 1
+                        ? `translate(${translate.x}px, ${translate.y}px) scale(${scale})`
+                        : `translateX(${swipeOffset}px)`,
+                  }
+                : undefined
+            }
+            onTouchEnd={idx === currentIndex ? onTap : undefined}
+          />
+        ))}
       </div>
     </div>
   )
