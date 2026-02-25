@@ -4,6 +4,7 @@ import { LazyDiv } from "../lazyDiv"
 import { Button } from "../button"
 import { useModal } from "../modal"
 import { GALLERY_IMAGES } from "../../images"
+import { PhotoViewer } from "../photoViewer"
 
 const CAROUSEL_ITEMS = GALLERY_IMAGES.map((item, idx) => (
   <div className="carousel-item" key={idx}>
@@ -33,6 +34,7 @@ type ClickMove = "left" | "right" | null
 export const Gallery = () => {
   const { openModal, closeModal } = useModal()
   const carouselRef = useRef<HTMLDivElement>({} as HTMLDivElement)
+  const [viewerImage, setViewerImage] = useState<string | null>(null)
 
   useEffect(() => {
     // preload images
@@ -221,6 +223,7 @@ export const Gallery = () => {
         move(slide, (slide + 1) % CAROUSEL_ITEMS.length)
       } else {
         setStatus("stationary")
+        setViewerImage(GALLERY_IMAGES[slide])
       }
     } else if (status === "dragging") {
       dragEnd(slide, dragOptionRef.current, carouselRef.current.clientWidth)
@@ -278,6 +281,12 @@ export const Gallery = () => {
 
   return (
     <LazyDiv className="card gallery">
+      {viewerImage && (
+        <PhotoViewer
+          src={viewerImage}
+          onClose={() => setViewerImage(null)}
+        />
+      )}
       <h2 className="english">Gallery</h2>
       <div className="carousel-wrapper">
         <div
@@ -373,12 +382,7 @@ export const Gallery = () => {
                       alt={`${idx}`}
                       draggable={false}
                       onClick={() => {
-                        if (statusRef.current === "stationary") {
-                          if (idx !== slideRef.current) {
-                            move(slideRef.current, idx)
-                          }
-                          closeModal()
-                        }
+                        setViewerImage(image)
                       }}
                     />
                   ))}
