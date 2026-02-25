@@ -34,7 +34,7 @@ type ClickMove = "left" | "right" | null
 export const Gallery = () => {
   const { openModal, closeModal } = useModal()
   const carouselRef = useRef<HTMLDivElement>({} as HTMLDivElement)
-  const [viewerImage, setViewerImage] = useState<string | null>(null)
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null)
 
   useEffect(() => {
     // preload images
@@ -223,7 +223,7 @@ export const Gallery = () => {
         move(slide, (slide + 1) % CAROUSEL_ITEMS.length)
       } else {
         setStatus("stationary")
-        setViewerImage(GALLERY_IMAGES[slide])
+        setViewerIndex(slide)
       }
     } else if (status === "dragging") {
       dragEnd(slide, dragOptionRef.current, carouselRef.current.clientWidth)
@@ -281,10 +281,11 @@ export const Gallery = () => {
 
   return (
     <LazyDiv className="card gallery">
-      {viewerImage && (
+      {viewerIndex !== null && (
         <PhotoViewer
-          src={viewerImage}
-          onClose={() => setViewerImage(null)}
+          images={GALLERY_IMAGES}
+          initialIndex={viewerIndex}
+          onClose={() => setViewerIndex(null)}
         />
       )}
       <h2 className="english">Gallery</h2>
@@ -382,7 +383,7 @@ export const Gallery = () => {
                       alt={`${idx}`}
                       draggable={false}
                       onClick={() => {
-                        setViewerImage(image)
+                        setViewerIndex(idx)
                       }}
                     />
                   ))}
