@@ -5,6 +5,7 @@ type PhotoViewerProps = {
   images: string[]
   initialIndex: number
   onClose: () => void
+  zoomEnabled?: boolean
 }
 
 type Point = { x: number; y: number }
@@ -25,6 +26,7 @@ export const PhotoViewer = ({
   images,
   initialIndex,
   onClose,
+  zoomEnabled = false,
 }: PhotoViewerProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [scale, setScale] = useState(1)
@@ -103,34 +105,40 @@ export const PhotoViewer = ({
     [],
   )
 
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      isPanning.current = false
-      isSwiping.current = false
-      const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY }
-      pinchStartDistance.current = getDistance(p1, p2)
-      pinchStartScale.current = scaleRef.current
-      pinchStartMid.current = getMidpoint(p1, p2)
-      pinchStartTranslate.current = { ...translateRef.current }
-    } else if (e.touches.length === 1) {
-      if (scaleRef.current > 1) {
-        isPanning.current = true
-        isSwiping.current = false
-      } else {
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2 && zoomEnabled) {
         isPanning.current = false
-        isSwiping.current = true
+        isSwiping.current = false
+        const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY }
+        pinchStartDistance.current = getDistance(p1, p2)
+        pinchStartScale.current = scaleRef.current
+        pinchStartMid.current = getMidpoint(p1, p2)
+        pinchStartTranslate.current = { ...translateRef.current }
+      } else if (e.touches.length === 1) {
+        if (scaleRef.current > 1 && zoomEnabled) {
+          isPanning.current = true
+          isSwiping.current = false
+        } else {
+          isPanning.current = false
+          isSwiping.current = true
+        }
+        panStart.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        }
+        panStartTranslate.current = { ...translateRef.current }
+        swipeStartX.current = e.touches[0].clientX
       }
-      panStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      panStartTranslate.current = { ...translateRef.current }
-      swipeStartX.current = e.touches[0].clientX
-    }
-  }, [])
+    },
+    [zoomEnabled],
+  )
 
   const onTouchMove = useCallback(
     (e: React.TouchEvent) => {
       e.preventDefault()
-      if (e.touches.length === 2) {
+      if (e.touches.length === 2 && zoomEnabled) {
         const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY }
         const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY }
         const dist = getDistance(p1, p2)
@@ -169,7 +177,7 @@ export const PhotoViewer = ({
         }
       }
     },
-    [clampTranslate, updateTransform],
+    [clampTranslate, updateTransform, zoomEnabled],
   )
 
   const onTouchEnd = useCallback(() => {
@@ -209,7 +217,7 @@ export const PhotoViewer = ({
   const lastTap = useRef(0)
   const onTap = useCallback(
     (e: React.TouchEvent) => {
-      if (isSwiping.current) return
+      if (!zoomEnabled || isSwiping.current) return
       const now = Date.now()
       if (now - lastTap.current < 300) {
         e.preventDefault()
@@ -232,7 +240,7 @@ export const PhotoViewer = ({
       }
       lastTap.current = now
     },
-    [clampTranslate, updateTransform],
+    [clampTranslate, updateTransform, zoomEnabled],
   )
 
   // Reset zoom when navigating
