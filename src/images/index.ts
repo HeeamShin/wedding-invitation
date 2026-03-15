@@ -10,16 +10,14 @@ import image8 from "./IMG_0331.jpg"
 import image9 from "./IMG_0403.jpg"
 import image10 from "./IMG_0426.jpg"
 import image11 from "./IMG_0460.jpg"
-import image12 from "./IMG_0492.jpg"
-import image13 from "./IMG_0521.jpg"
-import image14 from "./IMG_0531.jpg"
-import image15 from "./IMG_0584.jpg"
-import image16 from "./IMG_0685.jpg"
-import image17 from "./IMG_0696.jpg"
-import image18 from "./IMG_0767.jpg"
-import image19 from "./IMG_0771.jpg"
-import image20 from "./QWE_5212.jpg"
-import image21 from "./QWE_5339.jpg"
+import image12 from "./IMG_0492.jpeg"
+import image13 from "./IMG_COMB_0521_0531.jpeg"
+import image14 from "./IMG_0584.jpg"
+import image15 from "./IMG_0685.jpg"
+import image16 from "./IMG_0696.jpg"
+import image17 from "./IMG_0767.jpg"
+import image18 from "./QWE_5212.jpg"
+import image19 from "./QWE_5339.jpg"
 
 
 export const COVER_IMAGE = coverImage
@@ -44,6 +42,4 @@ export const GALLERY_IMAGES = [
   image17,
   image18,
   image19,
-  image20,
-  image21,
 ]
