@@ -97,40 +97,40 @@ npm run dev
 
 ## 배포하기
 
-### GitHub Pages 배포 방법
+### Netlify 배포 방법
 
-1. 이 저장소를 본인의 GitHub 계정으로 Fork
+빌드 설정은 저장소 루트의 `netlify.toml`에 정의되어 있습니다 (빌드 명령 `npm run build`, 배포 디렉토리 `build`, Node 22). 사이트는 도메인 루트(`/`)에서 서비스됩니다.
 
-2. `package.json`의 `homepage` 필드를 본인의 GitHub Pages URL로 수정
+1. Netlify에서 "Add new site" > "Import an existing project"로 이 GitHub 저장소를 연결
+   - 빌드 설정은 `netlify.toml`에서 자동으로 읽어오므로 별도로 입력할 필요가 없습니다.
 
-3. Fork된 저장소에서 GitHub Pages 배포 관련 설정
-   - Settings > Actions > General에서 "Workflow permissions"를 "Read and write permissions"로 설정
-   - Settings > Pages에서 "Build and deployment" 소스를 "GitHub Actions"로 설정
+2. Site configuration > Environment variables에서 환경변수 추가 (각 환경변수에 대한 설명은 위 환경변수 설정 참고)
+   - `VITE_NAVER_MAP_CLIENT_ID`
+   - `VITE_KAKAO_SDK_JS_KEY`
+   - `VITE_SERVER_URL`
+   - `VITE_STATIC_ONLY`
+   - 환경변수를 추가/변경한 뒤에는 재배포(Trigger deploy)해야 반영됩니다.
 
-4. Fork된 저장소의 Settings > Secrets and variables > Actions에서 환경변수 추가 (각 환경변수에 대한 설명은 위 환경변수 설정 참고)
-   - Secrets:
-     - `VITE_NAVER_MAP_CLIENT_ID`
-     - `VITE_KAKAO_SDK_JS_KEY`
-   - Variables:
-     - `VITE_SERVER_URL`
-     - `VITE_STATIC_ONLY`
+3. 외부 API에 Netlify 도메인 등록
+   - Naver Cloud Platform: Maps Application의 "Web 서비스 URL"에 Netlify 도메인 추가
+   - Kakao Developers: 앱 설정 > 플랫폼 > Web "사이트 도메인"에 Netlify 도메인 추가
+
+이후 `main` 브랜치에 push하면 Netlify가 자동으로 빌드 및 배포합니다.
 
 ### 다른 호스팅 플랫폼
 
-이 프로젝트는 정적 웹사이트이므로 정적 파일을 제공하는 모든 플랫폼에서 호스팅할 수 있습니다.
+이 프로젝트는 정적 웹사이트이므로 정적 파일을 제공하는 모든 플랫폼에서 호스팅할 수 있습니다. 하위 경로(예: `/my-wedding/`)에서 서비스해야 한다면 `vite.config.ts`의 `base` 값을 수정하세요.
 
-1. `package.json`의 `homepage` 필드를 본인의 호스팅 플랫폼 URL로 수정
-
-2. 환경변수 설정:
+1. 환경변수 설정:
    - 환경변수 설정 방법은 위 환경변수 설정 참고
 
-3. 프로젝트 빌드:
+2. 프로젝트 빌드:
 
 ```bash
 npm run build
 ```
 
-4. `build` 디렉토리의 내용을 호스팅 플랫폼에 배포
+3. `build` 디렉토리의 내용을 호스팅 플랫폼에 배포
 
 ## 📋 업데이트 내역
 
